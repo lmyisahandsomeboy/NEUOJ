@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long int
+ll w[50], v[50];
+ll n, c;
+
+struct node {
+	ll w;
+	ll v;
+};
+struct node p[1 << (40 / 2 + 2)];
+
+bool cmp1(struct node A, struct node B) {
+	if (A.w != B.w ) 
+		return A.w < B.w ;
+	return A.v < B.v ;
+}
+void solve() {
+
+	int mi = n / 2;
+	for (int i = 0; i < 1 << mi; i++) {
+		ll sw = 0ll, sv = 0ll;
+		for (int j = 0; j < mi; j++) {
+			if (i >> j & 1) {
+				sw += w[j];
+				sv += v[j];
+			}
+		}
+		p[i].w = sw;
+		p[i].v = sv; 
+	}
+
+	sort(p, p + (1 << mi), cmp1); 
+	int m = 1;
+	for (int i = 1; i < 1 << mi; i++) {
+		if (p[m - 1].v < p[i].v )
+			p[m++] = p[i];
+	}
+	ll ans = 0ll;
+
+	for (int i = 0; i < 1 << (n - mi); i++) {
+		ll sw = 0ll, sv = 0ll;
+		for (int j = 0; j < (n - mi); j++) {
+			if (i >> j & 1) {
+				sw += w[mi + j];
+				sv += v[mi + j]; 
+			}
+		}
+	
+		if (sw <= c) { 
+			node d;
+			d.w = c - sw;
+			d.v = 9999999999999999;
+			int z = lower_bound(p, p + m, d, cmp1) - p - 1; 
+			ans = max(ans, sv + p[z].v );
+		}
+	}
+	printf("%lld\n", ans);
+}
+
+int main(void) {
+	while (~scanf("%lld %lld", &n, &c)) {
+		for (int i = 0; i < n; i++) {
+			scanf("%lld %lld", &v[i], &w[i]);
+		}
+		solve();
+	}
+	return 0;
+}
