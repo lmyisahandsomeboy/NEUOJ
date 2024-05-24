@@ -1,0 +1,51 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+int value[101]={0};
+int weight[101]={0};
+int dp[101][10001]={0};
+int inf=0x3f3f3f3f;
+inline int min(int a,int b)
+{
+    return a<b?a:b;
+}
+int main(void)
+{
+    int W,N;
+    cin>>N>>W;
+    int ws=0,vs=0;
+    for(int i=0;i<N;i++)
+    {
+        scanf("%d%d",&value[i],&weight[i]);
+        ws+=weight[i];
+        vs+=value[i];
+    }
+    if(ws<=W)
+    {
+        cout<<vs;
+        return 0;
+    }
+    for(int i=0;i<N;i++)
+    {
+        for(int j=0;j<=vs;j++)dp[i][j]=inf;
+    }
+    dp[0][0]=0;
+    for(int i=0;i<N;i++)
+    {
+        for(int j=0;j<=vs;j++)
+        {
+            if(j>=value[i])
+                dp[i+1][j]=min(dp[i][j],dp[i][j-value[i]]+weight[i]);
+            else
+                dp[i+1][j]=dp[i][j];
+        }
+    }
+    int ans;
+    for(int i=0;i<=vs;i++)
+    {
+        if(W>=dp[N][i])ans=i;
+    }
+    cout<<ans;
+	return 0;
+}
