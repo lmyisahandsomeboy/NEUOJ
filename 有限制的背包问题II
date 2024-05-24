@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+struct node {
+	ll v,w,m;
+};
+ll dp[5005];
+bool cmp( node a,node b){
+	return a.v*(ll)b.w>b.v*(ll)a.w;
+}
+//from AOJ（AIZU OnlineJudge）
+int main()
+{
+	memset(dp,0x3f,sizeof(dp));
+	dp[0]=0;
+	int N,W;
+	cin>>N>>W;
+	node a[54];
+	for(int i=0;i<N;i++){
+		cin>>a[i].v>>a[i].w>>a[i].m;
+	}
+	sort(a,a+N,cmp);
+	for(int i=0;i<N;i++){
+		ll maxc=min(2ll,a[i].m);
+		a[i].m-=maxc;
+		while(maxc--){
+			for(int j=5000;j>=a[i].v;j--){
+				dp[j]=min(dp[j],dp[j-a[i].v]+a[i].w);
+			}
+		}
+	}
+	ll ans=0;
+	for(int i=1;i<=5000;i++){
+		ll cw=W-dp[i];
+		if(cw<0)continue;
+		ll cp=i;
+		for(int j=0;j<N&&cw>0;j++){
+			ll cnt=min(a[j].m,cw/a[j].w);
+			cw-=a[j].w*cnt;
+			cp+=a[j].v*cnt;
+		}
+		ans=max(ans,cp);
+	}
+	cout<<ans<<'\n';
+	return 0;
+}
