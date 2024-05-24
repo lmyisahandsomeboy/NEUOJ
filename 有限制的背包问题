@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+typedef long long int ll;
+typedef unsigned long long int ull;
+
+using namespace std;
+
+//from AOJ（AIZU University OnlineJudge）
+struct Info{
+	int weight,value,limit;
+};
+
+Info info[100];
+
+
+int main(){
+
+	int N,W;
+	scanf("%d %d",&N,&W);
+
+	for(int i = 0; i < N; i++){
+		scanf("%d %d %d",&info[i].value,&info[i].weight,&info[i].limit);
+	}
+
+	int* dp = new int[W+1];
+	dp[0] = 0;
+	for(int i = 1; i <= W; i++)dp[i] = -1;
+
+	int num,mult;
+	for(int i = 0; i < N; i++){
+		num = info[i].limit;
+		for(int k = 1; num > 0; k *= 2){
+			mult = min(k,num);
+			for(int w = W; w-mult*info[i].weight >= 0; w--){
+				if(dp[w-mult*info[i].weight] == -1)continue;
+				dp[w] = max(dp[w],dp[w-mult*info[i].weight]+mult*info[i].value);
+			}
+			num -= mult;
+		}
+	}
+
+	int ans = 0;
+	for(int i = 0; i <= W; i++)ans = max(ans,dp[i]);
+
+	printf("%d\n",ans);
+
+	return 0;
+}
